@@ -1,36 +1,116 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudioSpace — Cat Harry
 
-## Getting Started
+StudioSpace is a creative studio booking platform where users can explore creative spaces, view studio details, book studios, manage their listings, and share reviews.
 
-First, run the development server:
+## Features
+
+- **Authentication:** Sign up and sign in using email/password or Google.
+- **Explore Studios:** Browse available creative studios and search for spaces.
+- **Category Filtering:** Filter studios by category.
+- **Studio Details:** View studio information, images, amenities, hourly rates, and ratings.
+- **Studio Management:** Add, edit, and delete your own studio listings.
+- **Booking System:** Book studios by selecting a date and time.
+- **Booking Management:** View your bookings and cancel bookings when permitted.
+- **Double-booking Prevention:** Prevent conflicting confirmed bookings for the same studio.
+- **Reviews & Ratings:** Submit reviews and ratings for studios.
+- **User Dashboard:** Access dashboard information, listings, and bookings.
+- **Profile Management:** View and update profile information.
+- **Dark/Light Mode:** Switch between light and dark themes.
+- **Responsive Design:** Designed for mobile, tablet, and desktop screens.
+
+## Technologies Used
+
+### Frontend
+- Next.js (App Router)
+- React
+- TypeScript
+- Tailwind CSS
+- Lucide React
+- Swiper
+
+### Authentication
+- Better Auth
+- Google Authentication
+- JWT
+
+### Backend & Database
+- Express.js
+- MongoDB
+
+## Project Structure
+
+```text
+cat-harry-client/
+├── public/
+├── src/
+│   ├── app/
+│   ├── components/
+│   └── lib/
+├── .env.local
+├── package.json
+└── README.md
+```
+
+## Installation and Setup
+
+### 1. Clone the repository
+
+```bash
+git clone YOUR_CLIENT_REPOSITORY_URL
+cd cat-harry-client
+```
+
+### 2. Install dependencies
+
+```bash
+npm install
+```
+
+### 3. Configure environment variables
+
+Create a `.env.local` file and configure the required environment variables for authentication, MongoDB-backed authentication, and the backend API.
+
+Never commit secret keys, database credentials, or OAuth secrets to GitHub.
+
+### 4. Start the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Available Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev
+npm run lint
+npm run build
+```
 
-## Learn More
+- `npm run dev` — Starts the development server.
+- `npm run lint` — Checks code quality.
+- `npm run build` — Creates an optimized production build.
 
-To learn more about Next.js, take a look at the following resources:
+## Backend
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The frontend communicates with the separate StudioSpace Express.js backend.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Make sure the backend server and MongoDB connection are running before using features that require API data.
 
-## Deploy on Vercel
+## Responsive Design
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+StudioSpace supports:
+- Mobile devices
+- Tablets
+- Desktop screens
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Security
+
+- Authentication is handled by Better Auth.
+- Protected API operations use JWT verification.
+- Sensitive credentials are stored in environment variables.
+
+## License
+
+This project was developed as part of an academic assignment.
