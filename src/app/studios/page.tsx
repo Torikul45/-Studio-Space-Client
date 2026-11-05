@@ -53,7 +53,7 @@ function StudiosContent() {
         setLoading(true);
         setError("");
 
-        const response = await fetch("http://localhost:5000/studios");
+        const response = await fetch("https://studio-space-server-eight.vercel.app/studios");
 
         if (!response.ok) {
           throw new Error("Failed to load studios");

@@ -22,8 +22,7 @@ type Studio = {
   userEmail?: string;
 };
 
-const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "https://studio-space-server-eight.vercel.app";
 
 const categories = [
   "Photo Studios",
@@ -87,9 +86,7 @@ function EditStudioContent() {
 
         if (!active) return;
 
-        const studioEmail = (studio.userEmail || "")
-          .trim()
-          .toLowerCase();
+        const studioEmail = (studio.userEmail || "").trim().toLowerCase();
 
         if (studioEmail && studioEmail !== currentEmail) {
           toast.error("You can only edit your own studio.");
@@ -106,9 +103,7 @@ function EditStudioContent() {
           location: studio.location || "",
           image: studio.image || "",
           overview: studio.overview || "",
-          amenities: Array.isArray(studio.amenities)
-            ? studio.amenities
-            : [],
+          amenities: Array.isArray(studio.amenities) ? studio.amenities : [],
         });
       } catch (error) {
         console.error("Load studio error:", error);
@@ -128,10 +123,7 @@ function EditStudioContent() {
     };
   }, [id, sessionLoading, currentEmail, router]);
 
-  const updateField = (
-    field: keyof typeof form,
-    value: string
-  ) => {
+  const updateField = (field: keyof typeof form, value: string) => {
     setForm((previous) => ({
       ...previous,
       [field]: value,
@@ -147,9 +139,7 @@ function EditStudioContent() {
     }));
   };
 
-  const handleSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
-  ) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     if (!currentEmail) {
@@ -158,11 +148,7 @@ function EditStudioContent() {
       return;
     }
 
-    if (
-      !form.title.trim() ||
-      !form.location.trim() ||
-      !form.overview.trim()
-    ) {
+    if (!form.title.trim() || !form.location.trim() || !form.overview.trim()) {
       toast.error("Please complete all required fields.");
       return;
     }
@@ -182,24 +168,11 @@ function EditStudioContent() {
     try {
       setSaving(true);
 
-      // Get a JWT token from the BetterAuth token endpoint.
-      const tokenResponse = await fetch("/api/auth/token", {
-        method: "GET",
-        credentials: "include",
-        cache: "no-store",
-      });
-
-      const tokenResult = await tokenResponse.json().catch(() => null);
-
-      if (!tokenResponse.ok || !tokenResult?.token) {
-        throw new Error("Unable to get authentication token. Please login again.");
-      }
-
       const response = await fetch(`${API_URL}/studios/${id}`, {
         method: "PUT",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenResult.token}`,
         },
         body: JSON.stringify({
           ...form,
@@ -236,9 +209,7 @@ function EditStudioContent() {
       console.error("Update studio error:", error);
 
       toast.error(
-        error instanceof Error
-          ? error.message
-          : "Unable to update studio."
+        error instanceof Error ? error.message : "Unable to update studio.",
       );
     } finally {
       setSaving(false);
@@ -265,9 +236,7 @@ function EditStudioContent() {
         </Link>
 
         <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Edit Studio
-          </h1>
+          <h1 className="text-3xl font-bold text-gray-900">Edit Studio</h1>
 
           <p className="mt-2 text-gray-600">
             Update your studio details below.
@@ -315,9 +284,7 @@ function EditStudioContent() {
                   min="1"
                   type="number"
                   value={form.hourlyRate}
-                  onChange={(e) =>
-                    updateField("hourlyRate", e.target.value)
-                  }
+                  onChange={(e) => updateField("hourlyRate", e.target.value)}
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-[#6C4CF1]"
                 />
               </div>
@@ -347,9 +314,7 @@ function EditStudioContent() {
                   min="1"
                   type="number"
                   value={form.maxCapacity}
-                  onChange={(e) =>
-                    updateField("maxCapacity", e.target.value)
-                  }
+                  onChange={(e) => updateField("maxCapacity", e.target.value)}
                   className="w-full rounded-xl border border-gray-300 px-4 py-3 outline-none focus:border-[#6C4CF1]"
                 />
               </div>
@@ -423,9 +388,7 @@ function EditStudioContent() {
               disabled={saving}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#6C4CF1] px-5 py-3.5 font-semibold text-white transition hover:bg-[#5839D6] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {saving && (
-                <Loader2 size={18} className="animate-spin" />
-              )}
+              {saving && <Loader2 size={18} className="animate-spin" />}
               {saving ? "Updating Studio..." : "Update Studio"}
             </button>
           </form>

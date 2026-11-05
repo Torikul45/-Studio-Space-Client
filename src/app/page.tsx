@@ -144,7 +144,7 @@ export default function Home() {
   useEffect(() => {
     const fetchFeaturedStudios = async () => {
       try {
-        const response = await fetch("http://localhost:5000/studios/featured");
+        const response = await fetch("https://studio-space-server-eight.vercel.app/studios/featured");
 
         if (!response.ok) {
           throw new Error("Failed to load featured studios");

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useRef, useState } from "react";
@@ -90,27 +91,12 @@ export default function AddStudioPage() {
     try {
       setIsSubmitting(true);
 
-      // Get the BetterAuth JWT token from the Next.js server.
-      const tokenResponse = await fetch("/api/auth/token", {
-        method: "GET",
-        cache: "no-store",
-      });
-
-      const tokenResult = await tokenResponse.json();
-
-      if (!tokenResponse.ok || !tokenResult.token) {
-        throw new Error(
-          tokenResult.message ||
-            "Authentication token পাওয়া যায়নি। আবার login করো।",
-        );
-      }
-
-      // Send the token to the protected Express API.
-      const response = await fetch("http://localhost:5000/studios", {
+      // Send HTTPOnly Cookie with the protected Express API request.
+      const response = await fetch("https://studio-space-server-eight.vercel.app/studios", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${tokenResult.token}`,
         },
         body: JSON.stringify(studioData),
       });
@@ -159,7 +145,7 @@ export default function AddStudioPage() {
         </h1>
 
         <p className="text-gray-600">
-          Please log in to add your studio.
+          Please log in to add a studio.
         </p>
 
         <button

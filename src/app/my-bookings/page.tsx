@@ -34,23 +34,7 @@ type Booking = {
 };
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
-
-async function getAuthToken() {
-  const response = await fetch("/api/auth/token", {
-    method: "GET",
-    credentials: "include",
-    cache: "no-store",
-  });
-
-  const data = await response.json();
-
-  if (!response.ok || !data.token) {
-    throw new Error("Authentication token পাওয়া যায়নি। আবার login করো।");
-  }
-
-  return data.token as string;
-}
+  process.env.NEXT_PUBLIC_API_URL || "https://studio-space-server-eight.vercel.app";
 
 export default function MyBookingsPage() {
   const { data: session, isPending: sessionLoading } = useSession();
@@ -69,13 +53,10 @@ export default function MyBookingsPage() {
       try {
         setLoading(true);
 
-        const token = await getAuthToken();
-
+        // Fetch bookings using the HTTPOnly session cookie.
         const response = await fetch(`${API_URL}/bookings`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
           cache: "no-store",
         });
 
@@ -117,15 +98,12 @@ export default function MyBookingsPage() {
     try {
       setCancelling(true);
 
-      const token = await getAuthToken();
-
+      // Cancel booking using the HTTPOnly session cookie.
       const response = await fetch(
         `${API_URL}/bookings/${selectedBooking._id}/cancel`,
         {
           method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          credentials: "include",
         }
       );
 

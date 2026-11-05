@@ -28,7 +28,7 @@ type Studio = {
 };
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+  process.env.NEXT_PUBLIC_API_URL || "https://studio-space-server-eight.vercel.app";
 
 export default function MyListingsPage() {
   const router = useRouter();
@@ -55,33 +55,22 @@ export default function MyListingsPage() {
       try {
         setLoading(true);
 
-        // Get JWT token from BetterAuth.
-        const tokenResponse = await fetch("/api/auth/token", {
-          method: "GET",
-          credentials: "include",
-          cache: "no-store",
-        });
-
-        const tokenResult = await tokenResponse.json().catch(() => null);
-
-        if (!tokenResponse.ok || !tokenResult?.token) {
-          throw new Error(
-            "Unable to get authentication token. Please login again."
-          );
-        }
-
-        // Get only the logged-in user's studios.
+        // Fetch only the logged-in user's studios using HTTPOnly Cookie.
         const response = await fetch(`${API_URL}/my-studios`, {
           method: "GET",
-          headers: {
-            Authorization: `Bearer ${tokenResult.token}`,
-          },
+          credentials: "include",
           cache: "no-store",
         });
 
         const data = await response.json().catch(() => null);
 
         if (!response.ok) {
+          if (response.status === 401) {
+            throw new Error(
+              "Authentication failed. Please login again."
+            );
+          }
+
           throw new Error(
             data?.message || "Failed to load studio listings."
           );
@@ -120,29 +109,12 @@ export default function MyListingsPage() {
     try {
       setDeleting(true);
 
-      // Get JWT token from BetterAuth.
-      const tokenResponse = await fetch("/api/auth/token", {
-        method: "GET",
-        credentials: "include",
-        cache: "no-store",
-      });
-
-      const tokenResult = await tokenResponse.json().catch(() => null);
-
-      if (!tokenResponse.ok || !tokenResult?.token) {
-        throw new Error(
-          "Unable to get authentication token. Please login again."
-        );
-      }
-
-      // Delete only the owner's studio.
+      // Delete only the owner's studio using HTTPOnly Cookie.
       const response = await fetch(
         `${API_URL}/studios/${selectedStudio._id}`,
         {
           method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${tokenResult.token}`,
-          },
+          credentials: "include",
         }
       );
 

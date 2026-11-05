@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import { toast } from "sonner";
 
 type ReviewFormProps = {
@@ -10,22 +10,6 @@ type ReviewFormProps = {
   userEmail: string;
 };
 
-async function getAuthToken() {
-  const response = await fetch("/api/auth/token", {
-    method: "GET",
-    credentials: "include",
-    cache: "no-store",
-  });
-
-  const data = await response.json();
-
-  if (!response.ok || !data.token) {
-    throw new Error("Authentication token পাওয়া যায়নি। আবার login করো।");
-  }
-
-  return data.token as string;
-}
-
 export default function ReviewForm({
   studioId,
 }: ReviewFormProps) {
@@ -33,7 +17,7 @@ export default function ReviewForm({
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (rating === 0) {
@@ -54,15 +38,14 @@ export default function ReviewForm({
     try {
       setLoading(true);
 
-      const token = await getAuthToken();
-
+      // Send BetterAuth HTTPOnly cookie to Express Backend
       const response = await fetch(
-        `http://localhost:5000/studios/${studioId}/reviews`,
+        `https://studio-space-server-eight.vercel.app/studios/${studioId}/reviews`,
         {
           method: "POST",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             rating,
@@ -71,10 +54,14 @@ export default function ReviewForm({
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({
+        message: "Invalid server response.",
+      }));
 
       if (!response.ok) {
-        throw new Error(data.message || "Failed to submit review.");
+        throw new Error(
+          data.message || "Failed to submit review."
+        );
       }
 
       toast.success("Your review has been submitted successfully!");
@@ -82,11 +69,13 @@ export default function ReviewForm({
       setRating(0);
       setComment("");
 
-      // Review list এবং rating refresh করবে
+      // Refresh review list and studio rating
       window.location.reload();
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Something went wrong."
+        error instanceof Error
+          ? error.message
+          : "Something went wrong."
       );
     } finally {
       setLoading(false);
@@ -94,9 +83,14 @@ export default function ReviewForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-xl border p-5">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-5 rounded-xl border p-5"
+    >
       <div>
-        <h3 className="text-xl font-semibold">Write a Review</h3>
+        <h3 className="text-xl font-semibold">
+          Write a Review
+        </h3>
         <p className="mt-1 text-sm text-gray-500">
           Share your experience with this studio.
         </p>
@@ -113,7 +107,9 @@ export default function ReviewForm({
               onClick={() => setRating(star)}
               disabled={loading}
               className={`text-3xl ${
-                star <= rating ? "text-yellow-400" : "text-gray-300"
+                star <= rating
+                  ? "text-yellow-400"
+                  : "text-gray-300"
               }`}
               aria-label={`Rate ${star} out of 5`}
             >
@@ -124,7 +120,10 @@ export default function ReviewForm({
       </div>
 
       <div>
-        <label htmlFor="review" className="mb-2 block font-medium">
+        <label
+          htmlFor="review"
+          className="mb-2 block font-medium"
+        >
           Your Review
         </label>
 
@@ -138,6 +137,7 @@ export default function ReviewForm({
           disabled={loading}
           className="w-full rounded-lg border p-3 outline-none focus:border-green-600"
         />
+
         <p className="mt-1 text-right text-xs text-gray-500">
           {comment.length}/1000
         </p>

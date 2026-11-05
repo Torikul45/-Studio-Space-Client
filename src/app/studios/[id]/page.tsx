@@ -42,22 +42,6 @@ function getTodayDate() {
   return `${year}-${month}-${day}`;
 }
 
-async function getAuthToken() {
-  const response = await fetch("/api/auth/token", {
-    method: "GET",
-    credentials: "include",
-    cache: "no-store",
-  });
-
-  const data = await response.json();
-
-  if (!response.ok || !data.token) {
-    throw new Error("Authentication token পাওয়া যায়নি। আবার login করো।");
-  }
-
-  return data.token as string;
-}
-
 function StudioDetailsContent() {
   const params = useParams();
   const router = useRouter();
@@ -86,8 +70,8 @@ function StudioDetailsContent() {
         setError("");
 
         const [studioResponse, reviewsResponse] = await Promise.all([
-          fetch(`http://localhost:5000/studios/${id}`),
-          fetch(`http://localhost:5000/studios/${id}/reviews`),
+          fetch(`https://studio-space-server-eight.vercel.app/studios/${id}`),
+          fetch(`https://studio-space-server-eight.vercel.app/studios/${id}/reviews`),
         ]);
 
         if (!studioResponse.ok) {
@@ -164,20 +148,12 @@ function StudioDetailsContent() {
     try {
       setBookingLoading(true);
 
-      const token = await getAuthToken();
-      console.log("CLIENT BOOKING DATA:", {
-        studioId: studio._id,
-        bookingDate,
-        startTime,
-        endTime,
-        totalAmount,
-      });
-
-      const response = await fetch("http://localhost:5000/bookings", {
+      // Send the HTTPOnly session cookie to the protected Express API.
+      const response = await fetch("https://studio-space-server-eight.vercel.app/bookings", {
         method: "POST",
+        credentials: "include",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           studioId: studio._id,
